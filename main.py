@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 import random
-import copy
+import time
 
 TILE_SIZE = 32
 BLOCK_WIDTH = 30
@@ -10,7 +10,7 @@ WIN_WIDTH = TILE_SIZE * 9
 WIN_HEIGHT = TILE_SIZE * 9
 pygame.init()
 pygame.font.init()
-font = pygame.font.SysFont('ariel', 30)
+font = pygame.font.SysFont('calibri', 22)
 display = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 display.fill((0, 0, 0))
 pygame.display.set_caption("Sudoku")
@@ -36,7 +36,7 @@ def digginHelper(board, list_of_removed_spaces,counter ):
 def digging(board):
     list_of_removed_spaces = []
     attempts = 0
-    while attempts <50 :
+    while attempts <= 60 :
         # Select a random cell that is not already empty
         row = random.randint(0, 8)
         col = random.randint(0, 8)
@@ -48,7 +48,7 @@ def digging(board):
         board[row][col] = 0
         list_of_removed_spaces.append([row,col])
         board = digginHelper(board, list_of_removed_spaces, attempts)
-        attempts +=    1
+        attempts += 1
         # drawBoard(board)
         if not solve_sudoku(board):
             board[row][col] = backup
@@ -135,17 +135,24 @@ def valid(num, row, col):
 
 
 def drawBoard(board):
-    for row in range(9):  # draws the grid
-        for column in range(9):
-            pygame.draw.rect(display, (255, 255, 255,),  # make blocks
-                             [(MARGIN + BLOCK_WIDTH) * column + MARGIN, (MARGIN + BLOCK_WIDTH) * row + MARGIN,
-                              BLOCK_WIDTH, BLOCK_WIDTH])
-            if board[row][column] != 0:  # insert number into corresponding block. ignore 0's they're empty spots
-                text_surface = font.render(str(board[row][column]), False, (0, 0, 0))
-                display.blit(text_surface, [(MARGIN + BLOCK_WIDTH) * column + MARGIN + ((BLOCK_WIDTH + MARGIN) / 4),
-                                            (MARGIN + BLOCK_WIDTH) * row + MARGIN + ((BLOCK_WIDTH + MARGIN) / 4)])
-            pygame.display.update()
 
+    display.fill((255,255,255))
+    for i in range(9): # draw vertical lines
+        if i % 3 ==0:
+            pygame.draw.line(display, (0,0,0), ((TILE_SIZE*i), 0), ((TILE_SIZE*i),(TILE_SIZE*9)),2)
+        else:
+            pygame.draw.line(display, (0,0,0), ((TILE_SIZE*i), 0), ((TILE_SIZE*i),(TILE_SIZE*9)),1)
+        for i in range(9): # draw vertical lines
+            if i % 3 ==0:
+                pygame.draw.line(display, (0,0,0), (0,(TILE_SIZE*i)), ((TILE_SIZE*9),(TILE_SIZE*i)),2)
+            else:
+                pygame.draw.line(display, (0,0,0), (0, (TILE_SIZE*i)), ((TILE_SIZE*9),(TILE_SIZE*i)),1)
+        for row in range(9):
+            for col in range(9):
+                if board[row][col] != 0:  # insert number into corresponding block. ignore 0's they're empty spots
+                    text_surface = font.render(str(board[row][col]), False, (0, 0, 0))
+                    display.blit(text_surface,[(row * TILE_SIZE) +10 , (col * TILE_SIZE)+8 ])
+        pygame.display.update()
 
 def checkWin(board):
     for r in range(9):
@@ -162,63 +169,65 @@ drawBoard(grid)
 checkWin(grid)
 playing_board = digging(grid)
 drawBoard(playing_board)
+
+
 print("board is ready")
 selected = False
 click_x = 0
 click_y = 0
 while True:  # THIS IS WHERE THE GAME LOOP STARTS !!!!!!!!!
-
+    pygame.display.update()
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN:  # find cell that was clicked then use the mouse coordinates to
             # "select" one
             pos = pygame.mouse.get_pos()
-            click_x = pos[1] // (BLOCK_WIDTH + MARGIN)  # find the block that was pressed
-            click_y = pos[0] // (BLOCK_WIDTH + MARGIN)
+            click_x = pos[0] // (TILE_SIZE)  # find the block that was pressed
+            click_y = pos[1] // (TILE_SIZE)
             print(click_x, click_y)
             selected = True
         elif event.type == KEYDOWN:  # basically enter the number that was pressed ik this is probably super inefficient
             if event.key == K_1:
-                if selected and grid[click_x][click_y] == 0:
-                    grid[click_x][click_y] = 1
+                if selected and playing_board[click_x][click_y] == 0:
+                    playing_board[click_x][click_y] = 1
                     selected = False
                     drawBoard(playing_board)
             elif event.key == K_2:
                 if selected:
-                    grid[click_x][click_y] = 2
+                    playing_board[click_x][click_y] = 2
                     selected = False
                     drawBoard(playing_board)
             elif event.key == pygame.K_3:
                 if selected:
-                    grid[click_x][click_y] = 3
+                    playing_board[click_x][click_y] = 3
                     selected = False
                     drawBoard(playing_board)
             elif event.key == pygame.K_4:
                 if selected:
-                    grid[click_x][click_y] = 4
+                    playing_board[click_x][click_y] = 4
                     selected = False
                     drawBoard(playing_board)
             elif event.key == pygame.K_5:
                 if selected:
-                    grid[click_x][click_y] = 5
+                    playing_board[click_x][click_y] = 5
                     selected = False
                     drawBoard(playing_board)
             elif event.key == pygame.K_6:
                 if selected:
-                    grid[click_x][click_y] = 6
+                    playing_board[click_x][click_y] = 6
                     selected = False
                     drawBoard(playing_board)
             elif event.key == pygame.K_7:
                 if selected:
-                    grid[click_x][click_y] = 7
+                    playing_board[click_x][click_y] = 7
                     selected = False
                     drawBoard(playing_board)
             elif event.key == pygame.K_8:
                 if selected:
-                    grid[click_x][click_y] = 8
+                    playing_board[click_x][click_y] = 8
                     selected = False
                     drawBoard(playing_board)
             elif event.key == pygame.K_9:
                 if selected:
-                    grid[click_x][click_y] = 9
+                    playing_board[click_x][click_y] = 9
                     selected = False
                     drawBoard(playing_board)
