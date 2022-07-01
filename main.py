@@ -21,10 +21,11 @@ pygame.display.set_caption("Sudoku")
 grid = GameBuilder.build()
 
 
-def fillTile(selected, location, keyPressed, grid_local):
-    #if selected:
-    GameBuilder.addToUserInputted(location, keyPressed)
-    #grid_local = GameBuilder.build()
+def fillTile(selected, location, keyPressed):
+    if selected:
+        GameBuilder.addToUserInputted(location, keyPressed)
+        grid_local = GameBuilder.build()
+        return grid_local
 
 
 
@@ -62,13 +63,16 @@ while True:  # THIS IS WHERE THE GAME LOOP STARTS !!!!!!!!!
             # find cell that was clicked then use the mouse coordinates to "select" one
             pos = pygame.mouse.get_pos()
             # find the block that was pressed and store it as a tuple
-            location = (pos[1] // TILE_SIZE, pos[0] // TILE_SIZE)
+            location = (pos[0] // TILE_SIZE, pos[1] // TILE_SIZE)
 
             print(location)
             selected = True
         elif event.type == KEYDOWN:  # basically enter the number that was pressed ik this is probably super inefficient
                 keyPressed = event.__getattribute__('unicode')
-                fillTile(selected, location, keyPressed, grid)
+                grid = fillTile(selected, location, keyPressed)
+                drawBoard()
+                pygame.display.update()
+                selected = False
         elif event.type == pygame.QUIT:
             pygame.quit()
             exit()
