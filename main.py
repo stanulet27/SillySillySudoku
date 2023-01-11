@@ -1,5 +1,5 @@
 import pygame
-import GameBuilder
+from GameBuilder import Board
 from pygame.locals import *
 from sys import exit
 import random
@@ -18,17 +18,13 @@ display.fill((0, 0, 0))
 pygame.display.set_caption("Sudoku")
 
 # get grid
+
+#this will be the main grid
+grid = Board()
+#this grid will be used to track the user inputted tiles
+#user grid will be used to init the main grid after every correct input.
+grid_user = Board()
 print("getting grid")
-grid = GameBuilder.build()
-
-
-def fillTile(selected, location, keyPressed):
-    if selected:
-        GameBuilder.addToUserInputted(location, keyPressed)
-        grid_local = GameBuilder.build()
-        return grid_local
-
-
 
 def drawBoard():
     display.fill((255, 255, 255))
@@ -50,7 +46,6 @@ def drawBoard():
         pygame.display.update()
 
 
-print("board is ready")
 drawBoard()
 
 selected = False
@@ -64,13 +59,16 @@ while True:  # THIS IS WHERE THE GAME LOOP STARTS !!!!!!!!!
             # find cell that was clicked then use the mouse coordinates to "select" one
             pos = pygame.mouse.get_pos()
             # find the block that was pressed and store it as a tuple
-            location = (pos[0] // TILE_SIZE, pos[1] // TILE_SIZE)
 
+            ###location is stored as (row, col)###
+
+            location = (pos[1] // TILE_SIZE, pos[0] // TILE_SIZE)
             print(location)
             selected = True
         elif event.type == KEYDOWN:  # enter the number that was pressed 
                 keyPressed = event.__getattribute__('unicode')
-                grid = fillTile(selected, location, keyPressed)
+                print(keyPressed)
+                #TODO: pass number and tile into board method 
                 drawBoard()
                 pygame.display.update()
                 selected = False

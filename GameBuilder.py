@@ -15,6 +15,10 @@ class Board:
         else:
             self.board_string = None
 
+
+    def __getitem__(self,key):
+        return self.board[key]
+
     def __resetBoard(self):
         self.board = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -71,5 +75,21 @@ class Board:
         return True
 
     def solve(self):
-        pass
+        spacesAvailable = self.findFirstEmpty()
+        if not spacesAvailable:
+            return True
+        else:
+            row,col = spacesAvailable
+        
+        for n in range (1,10):
+            if self.isValid(n,(row,col)):
+                self.board[row][col] = n
+            if self.solve():
+                return True
+            
+            self.board[row][col] = 0
+
+        return False
+
+        #TODO: Make a mehtod that adds user inputted tiles to the board. 
     
