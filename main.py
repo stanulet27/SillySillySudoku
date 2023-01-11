@@ -18,6 +18,7 @@ display.fill((0, 0, 0))
 pygame.display.set_caption("Sudoku")
 
 # get grid
+print("getting grid")
 grid = GameBuilder.build()
 
 
@@ -67,7 +68,7 @@ while True:  # THIS IS WHERE THE GAME LOOP STARTS !!!!!!!!!
 
             print(location)
             selected = True
-        elif event.type == KEYDOWN:  # basically enter the number that was pressed ik this is probably super inefficient
+        elif event.type == KEYDOWN:  # enter the number that was pressed 
                 keyPressed = event.__getattribute__('unicode')
                 grid = fillTile(selected, location, keyPressed)
                 drawBoard()
