@@ -41,7 +41,7 @@ def drawBoard():
                 pygame.draw.line(display, (0, 0, 0), (0, (TILE_SIZE * i)), ((TILE_SIZE * 9), (TILE_SIZE * i)), 1)
         for row in range(9):
             for col in range(9):
-                if grid_string[row*9 + col] != 0:  # insert number into corresponding block. ignore 0's they're empty spots
+                if grid_string[row*9 + col] != '0':  # insert number into corresponding block. ignore 0's they're empty spots
                     text_surface = font.render(str(grid[row][col]), False, (0, 0, 0))
                     display.blit(text_surface, [(row * TILE_SIZE) + 10, (col * TILE_SIZE) + 8])
         pygame.display.update()

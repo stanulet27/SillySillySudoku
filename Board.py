@@ -1,4 +1,5 @@
 import random
+import copy
 
 class Board:
     def __init__(self,board_string=None):
@@ -115,8 +116,78 @@ class Board:
                 _num = random.choice(_nums)
                 self.board[row][col] = _num
                 _nums.remove(_num)
+        self.solve()
+        self.digger()
+        return self
 
-        return self.solve()
+    def __findNthEmpty(self,board,n):
+        _index = 1
+        for row in range(9):
+            for col in range(9):
+                if board[row][col] == 0:
+                    if _index == n:
+                        return (row,col)
+                _index+=1
+        return (-1,-1)
+
+    
+    def __solveForCreation(self,row,col):
+        for n in range(1,10):
+            if self.board[row][col]:
+                if self.solve():
+                    return self.board
+                self.board[row][col] = 0
+        return False
+
+    def findNumberOfSolutions(self):
+        _index = 0
+        _listOfSolutions = []
+        for row in range(9):
+            for col in range(9):
+                if self.board[row][col] == 0:
+                    _index += 1
+        
+        for i in range(1,_index+1):
+            _boardCopy = copy.deepcopy(self)
+
+            _row, _col = self.__findNthEmpty(_boardCopy.board,i)
+            _boardCopySolution = _boardCopy.__solveForCreation(_row,_col)
+
+            _listOfSolutions.append(self.boardToboard_string(input_board=_boardCopySolution))
+
+        return list(set(_listOfSolutions))
+
+    def digger(self, spacesLeft = 81):
+        key = copy.deepcopy(self)
+        _numToRemove = 46
+        if spacesLeft < _numToRemove:
+            _numToRemove = spacesLeft
+        
+
+        for i in range (0,3):
+            _counter = 0
+            while _counter < 4:
+                _rRow = random.randint((3 * i), 2 + (3 * i))
+                _rCol = random.randint((3 * i), 2 + (3 * i))
+                if self.board[_rRow][_rCol] != 0:
+                    self.board[_rRow][_rCol] = 0
+                    _counter += 1
+        _numToRemove -= 12
+        _counter = 0
+        while _counter < _numToRemove:
+            _row = random.randint(0,8)
+            _col = random.randint(0,8)
+
+            if self.board[_row][_col] != 0:
+                n = self.board[_row][_col]
+                self.board[_row][_col] = 0
+
+                if len(self.findNumberOfSolutions()) != 1:
+                    self.board[_row][_col] = n
+                    continue
+            _counter += 1
+        
+        return self.board, key
 
     #TODO: Make a mehtod that adds user inputted tiles to the board. 
     
