@@ -1,5 +1,5 @@
 import pygame
-from GameBuilder import Board
+from Board import Board
 from pygame.locals import *
 from sys import exit
 import random
@@ -27,6 +27,7 @@ grid_user = Board()
 print("getting grid")
 
 def drawBoard():
+    grid_string = grid.board_string
     display.fill((255, 255, 255))
     for i in range(9):  # draw horizontal lines
         if i % 3 == 0:
@@ -40,7 +41,7 @@ def drawBoard():
                 pygame.draw.line(display, (0, 0, 0), (0, (TILE_SIZE * i)), ((TILE_SIZE * 9), (TILE_SIZE * i)), 1)
         for row in range(9):
             for col in range(9):
-                if grid[row][col] != 0:  # insert number into corresponding block. ignore 0's they're empty spots
+                if grid_string[row*9 + col] != 0:  # insert number into corresponding block. ignore 0's they're empty spots
                     text_surface = font.render(str(grid[row][col]), False, (0, 0, 0))
                     display.blit(text_surface, [(row * TILE_SIZE) + 10, (col * TILE_SIZE) + 8])
         pygame.display.update()

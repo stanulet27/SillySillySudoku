@@ -4,16 +4,17 @@ class Board:
     def __init__(self,board_string=None):
         #creates a new, empty board
         self.__resetBoard()
-        #if not null it will fill in the board with what was passed in
+        #if not null it will fill in the board with what was passed in the solve to get new key
         if board_string:
             self.board_string = board_string
             for row in range(9):
                 for col in range(9):
                     self.board[row][col] = int(board_string[0])
                     board_string = board_string[1:]
-        # if null then leave the board empty
+        # if null then generate a random board
         else:
-            self.board_string = None
+            self.__generateRamdomBoard()
+            self.board_string = self.boardToboard_string()
 
 
     def __getitem__(self,key):
@@ -40,7 +41,7 @@ class Board:
             return _board_string
         #returns the string for this board instance
         else:
-            self.board_string = ''.join([str(i) for j in input_board for i in j])
+            self.board_string = ''.join([str(i) for j in self.board for i in j])
             return self.board_string 
 
     def findFirstEmpty(self):
@@ -64,7 +65,7 @@ class Board:
                 return False
 
         boxR = space[0] // 3
-        boxC = space[0] // 3
+        boxC = space[1] // 3
         #make sure num is not in the same 3x3 'box'
         for i in range(3):
             for j in range(3):
@@ -84,12 +85,38 @@ class Board:
         for n in range (1,10):
             if self.isValid(n,(row,col)):
                 self.board[row][col] = n
-            if self.solve():
-                return True
+                if self.solve():
+                    return True
             
             self.board[row][col] = 0
 
         return False
 
-        #TODO: Make a mehtod that adds user inputted tiles to the board. 
+    def __generateRamdomBoard(self):
+        #generate fill top left block randomly
+        _nums = list(range(1,10))
+        for row in range(3):
+            for col in range(3):
+                _num = random.choice(_nums)
+                self.board[row][col] = _num
+                _nums.remove(_num)
+        #same for center block
+        _nums = list(range(1,10))        
+        for row in range(3,6):
+            for col in range(3,6):
+                _num = random.choice(_nums)
+                self.board[row][col] = _num
+                _nums.remove(_num)
+
+        #same for bottom left
+        _nums = list(range(1,10))
+        for row in range(6,9):
+            for col in range(6,9):
+                _num = random.choice(_nums)
+                self.board[row][col] = _num
+                _nums.remove(_num)
+
+        return self.solve()
+
+    #TODO: Make a mehtod that adds user inputted tiles to the board. 
     
