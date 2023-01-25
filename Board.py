@@ -1,25 +1,36 @@
 import random
 import copy
 
+
+
 class Board:
-    def __init__(self,board_string=None):
+    def __init__(self):
         #creates a new, empty board
         self.__resetBoard()
-        #if not null it will fill in the board with what was passed in the solve to get new key
-        if board_string:
-            self.board_string = board_string
-            for row in range(9):
-                for col in range(9):
-                    self.board[row][col] = int(board_string[0])
-                    board_string = board_string[1:]
-        # if null then generate a random board
-        else:
-            self.__generateRamdomBoard()
-            self.board_string = self.boardToboard_string()
+        self.__resetUser()
+        self.spacesFilled = 0
+
+        # generate a random board
+        self.__generateRamdomBoard()
+        self.board_string = self.boardToboard_string()
 
 
     def __getitem__(self,key):
         return self.board[key]
+
+    def __resetUser(self):
+        self.user = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+        return self.user
 
     def __resetBoard(self):
         self.board = [
@@ -35,15 +46,6 @@ class Board:
         ]
         return self.board
 
-    def boardToboard_string(self, input_board=None):
-        #returns stirng for other board
-        if input_board:
-            _board_string = ''.join([str(i) for j in input_board for i in j])
-            return _board_string
-        #returns the string for this board instance
-        else:
-            self.board_string = ''.join([str(i) for j in self.board for i in j])
-            return self.board_string 
 
     def findFirstEmpty(self):
         for row in range(9):
@@ -158,7 +160,7 @@ class Board:
         return list(set(_listOfSolutions))
 
     def digger(self, spacesLeft = 81):
-        key = copy.deepcopy(self)
+        self.key = copy.deepcopy(self.board)
         _numToRemove = 46
         if spacesLeft < _numToRemove:
             _numToRemove = spacesLeft
@@ -187,7 +189,18 @@ class Board:
                     continue
             _counter += 1
         
-        return self.board, key
+        return self.board, self.key
 
     #TODO: Make a mehtod that adds user inputted tiles to the board. 
-    
+    def enterSpace(self, tile, num):
+        if self.board[tile[0]][tile[1]] == 0:
+            if self.key[tile[0]][tile[1]] != num:
+                print("key says this spot was supposed to be " + str(self.key[tile[0]][tile[1]]))
+                return False
+            self.user[tile[0]][tile[1]] = num
+            self.board = copy.deepcopy(self.user)
+            self.spacesFilled = self.spacesFilled + 1
+            self.solve()
+            self.digger(spacesLeft= 81 - self.spacesFilled)
+            return True
+        print("Board was not empty")

@@ -2,7 +2,7 @@ import pygame
 from Board import Board
 from pygame.locals import *
 from sys import exit
-import random
+
 
 # Game variables
 TILE_SIZE = 32
@@ -17,17 +17,14 @@ display = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 display.fill((0, 0, 0))
 pygame.display.set_caption("Sudoku")
 
-# get grid
+#get grid
 
 #this will be the main grid
 grid = Board()
-#this grid will be used to track the user inputted tiles
-#user grid will be used to init the main grid after every correct input.
-grid_user = Board()
 print("getting grid")
 
 def drawBoard():
-    grid_string = grid.board_string
+
     display.fill((255, 255, 255))
     for i in range(9):  # draw horizontal lines
         if i % 3 == 0:
@@ -41,10 +38,12 @@ def drawBoard():
                 pygame.draw.line(display, (0, 0, 0), (0, (TILE_SIZE * i)), ((TILE_SIZE * 9), (TILE_SIZE * i)), 1)
         for row in range(9):
             for col in range(9):
-                if grid_string[row*9 + col] != '0':  # insert number into corresponding block. ignore 0's they're empty spots
+                pygame.display.update()
+                if grid[row][col] != 0:  # insert number into corresponding block. ignore 0's they're empty spots
                     text_surface = font.render(str(grid[row][col]), False, (0, 0, 0))
-                    display.blit(text_surface, [(row * TILE_SIZE) + 10, (col * TILE_SIZE) + 8])
-        pygame.display.update()
+                    # coords are (x,y) which is (col, row)
+                    display.blit(text_surface, [(col * TILE_SIZE) + 10, (row * TILE_SIZE) + 8])
+
 
 
 drawBoard()
@@ -68,13 +67,15 @@ while True:  # THIS IS WHERE THE GAME LOOP STARTS !!!!!!!!!
             selected = True
         elif event.type == KEYDOWN:  # enter the number that was pressed 
                 keyPressed = event.__getattribute__('unicode')
-                print(keyPressed)
-                #TODO: pass number and tile into board method 
+                print(keyPressed) 
+                if not grid.enterSpace(location,int(keyPressed)):
+                    text_surface = font.render(str(grid[location[0]][location[1]]), False, (255, 0, 0))
+                    display.blit(text_surface, [(location[0] * TILE_SIZE) + 10, (location[1] * TILE_SIZE) + 8])
+                
                 drawBoard()
                 pygame.display.update()
                 selected = False
         elif event.type == pygame.QUIT:
             pygame.quit()
             exit()
-            break
 
