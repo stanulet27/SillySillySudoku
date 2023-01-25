@@ -46,6 +46,15 @@ class Board:
         ]
         return self.board
 
+    def boardToboard_string(self, input_board=None):
+        #returns stirng for other board
+        if input_board:
+            _board_string = ''.join([str(i) for j in input_board for i in j])
+            return _board_string
+        #returns the string for this board instance
+        else:
+            self.board_string = ''.join([str(i) for j in self.board for i in j])
+            return self.board_string 
 
     def findFirstEmpty(self):
         for row in range(9):
@@ -84,14 +93,18 @@ class Board:
             return True
         else:
             row,col = spacesAvailable
-        
-        for n in range (1,10):
-            if self.isValid(n,(row,col)):
-                self.board[row][col] = n
+        numsAvail = [1,2,3,4,5,6,7,8,9]
+        for n in range(len(numsAvail)):
+            guess = random.choice(numsAvail)
+            numsAvail.remove(guess)
+            if self.isValid(guess,(row,col)):
+                self.board[row][col] = guess
+
                 if self.solve():
                     return True
-            
+                    
             self.board[row][col] = 0
+            numsAvail.append(guess)
 
         return False
 
@@ -180,14 +193,14 @@ class Board:
             _row = random.randint(0,8)
             _col = random.randint(0,8)
 
-            if self.board[_row][_col] != 0:
+            if self.board[_row][_col] != 0 and self.user[_row][_col] == 0:
                 n = self.board[_row][_col]
                 self.board[_row][_col] = 0
 
                 if len(self.findNumberOfSolutions()) != 1:
                     self.board[_row][_col] = n
                     continue
-            _counter += 1
+                _counter += 1
         
         return self.board, self.key
 
@@ -202,5 +215,5 @@ class Board:
             self.spacesFilled = self.spacesFilled + 1
             self.solve()
             self.digger(spacesLeft= 81 - self.spacesFilled)
-            return True
+            return self.board, self.user, self.spacesFilled, True
         print("Board was not empty")
